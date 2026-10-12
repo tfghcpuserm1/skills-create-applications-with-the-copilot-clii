@@ -1,0 +1,8 @@
+{
+  "name": "skills-create-applications-with-the-copilot-clii",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test src/tests/*.test.js"
+  }
+}
