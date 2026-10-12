@@ -2,7 +2,7 @@
 
 /**
  * A command-line calculator supporting addition (+), subtraction (-),
- * multiplication (*), and division (/).
+ * multiplication (*), division (/), modulo (%), exponentiation (^), and square root.
  */
 
 function assertFiniteNumber(value) {
@@ -40,6 +40,33 @@ function divide(left, right) {
   return left / right;
 }
 
+function modulo(left, right) {
+  assertFiniteNumber(left);
+  assertFiniteNumber(right);
+
+  if (right === 0) {
+    throw new RangeError('Cannot divide by zero.');
+  }
+
+  return left % right;
+}
+
+function power(base, exponent) {
+  assertFiniteNumber(base);
+  assertFiniteNumber(exponent);
+  return base ** exponent;
+}
+
+function squareRoot(value) {
+  assertFiniteNumber(value);
+
+  if (value < 0) {
+    throw new RangeError('Cannot calculate square root of a negative number.');
+  }
+
+  return Math.sqrt(value);
+}
+
 function calculate(left, operation, right) {
   switch (operation) {
     case '+':
@@ -50,14 +77,30 @@ function calculate(left, operation, right) {
       return multiply(left, right);
     case '/':
       return divide(left, right);
+    case '%':
+      return modulo(left, right);
+    case '^':
+      return power(left, right);
+    case 'sqrt':
+      return squareRoot(left);
     default:
-      throw new TypeError('Operation must be one of: +, -, *, /.');
+      throw new TypeError('Operation must be one of: +, -, *, /, %, ^, sqrt.');
   }
 }
 
 function runCli(args) {
+  if (args.length === 2 && args[0] === 'sqrt') {
+    try {
+      console.log(squareRoot(Number(args[1])));
+    } catch (error) {
+      console.error(error.message);
+      process.exitCode = 1;
+    }
+    return;
+  }
+
   if (args.length !== 3) {
-    console.error('Usage: node src/calculator.js <number> <+|-|*|/> <number>');
+    console.error('Usage: node src/calculator.js <number> <+|-|*|/|%|^> <number> or node src/calculator.js sqrt <number>');
     process.exitCode = 1;
     return;
   }
@@ -76,4 +119,14 @@ if (require.main === module) {
   runCli(process.argv.slice(2));
 }
 
-module.exports = { add, subtract, multiply, divide, calculate, runCli };
+module.exports = {
+  add,
+  subtract,
+  multiply,
+  divide,
+  modulo,
+  power,
+  squareRoot,
+  calculate,
+  runCli,
+};
